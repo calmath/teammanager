@@ -10,7 +10,6 @@ const squidexApi = {
   appName: config.appName,
   clientId: config.clientId,
   clientSecret: config.clientSecret,
-  authToken: {}
 }
 
 squidexApi.getAccessToken = () => new Promise((resolve, reject) => {
@@ -35,8 +34,21 @@ squidexApi.getAccessToken = () => new Promise((resolve, reject) => {
   }, 1000)
 })
 
-/*
-const makeXMLHTTPRequest = ({url, method, ...args}) => new Promise((resolve, reject) => {
+squidexApi.authenticateMember = (member) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    try {
+      if (member.username === 'mark.ames' && member.password === 'pwd') {
+        resolve({ id: 0, username: member.username, name: 'Mark Ames' })
+      } else {
+        reject(new Error('User details incorrect'))
+      }
+    } catch (err) {
+      reject(new Error(err))
+    }
+  }, 1000)
+})
+
+squidexApi.makeXMLHTTPRequest = ({url, method, authToken, ...args}) => new Promise((resolve, reject) => {
   setTimeout(() => {
     try {
       var request = new XMLHttpRequest()
@@ -52,7 +64,7 @@ const makeXMLHTTPRequest = ({url, method, ...args}) => new Promise((resolve, rej
       request.open(method, url)
       request.setRequestHeader('Content-Type', 'application/json')
       request.setRequestHeader('Accept', 'application/json')
-      request.setRequestHeader('Authorization', 'Bearer ' + squidexApi.authToken.access_token)
+      request.setRequestHeader('Authorization', 'Bearer ' + authToken.access_token)
       if (args.data) {
         request.send(args.data)
       } else {
@@ -63,6 +75,5 @@ const makeXMLHTTPRequest = ({url, method, ...args}) => new Promise((resolve, rej
     }
   }, 1000)
 })
-*/
 
 export default squidexApi

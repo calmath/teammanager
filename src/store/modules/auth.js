@@ -1,9 +1,9 @@
 /* eslint-disable promise/param-names */
 import { AUTH_REQUEST, AUTH_ERROR, AUTH_SUCCESS, AUTH_LOGOUT } from '../actions/auth'
-import squidexApi from 'utils/squidexApi'
+import squidexApi from 'api/squidexApi'
 import {AppInsights} from 'applicationinsights-js'
 
-const state = { profileId: localStorage.getItem('user-profileId'), profile: localStorage.getItem('user-profile') || {}, status: '' }
+const state = { profileId: localStorage.getItem('teammanager-profileId'), profile: localStorage.getItem('teammanager-profile') || {}, status: '' }
 
 const getters = {
   isAuthenticated: state => !!state.profileId,
@@ -18,8 +18,8 @@ const actions = {
       squidexApi.authenticateMember(user)
       .then(profile => {
         if (profile) {
-          localStorage.setItem('user-profile', profile)
-          localStorage.setItem('user-profileId', profile.id)
+          localStorage.setItem('teammanager-profile', profile)
+          localStorage.setItem('teammanager-profileId', profile.id)
           AppInsights.setAuthenticatedUserContext(profile.id)
           commit(AUTH_SUCCESS, profile)
           resolve()
@@ -31,8 +31,8 @@ const actions = {
       .catch(err => {
         AppInsights.trackException(err)
         commit(AUTH_ERROR, err)
-        localStorage.removeItem('user-profile')
-        localStorage.removeItem('user-profileId')
+        localStorage.removeItem('teammanager-profile')
+        localStorage.removeItem('teammanager-profileId')
         reject(err)
       })
     })
@@ -40,8 +40,8 @@ const actions = {
   [AUTH_LOGOUT]: ({commit, dispatch}) => {
     return new Promise((resolve, reject) => {
       commit(AUTH_LOGOUT)
-      localStorage.removeItem('user-profile')
-      localStorage.removeItem('user-profileId')
+      localStorage.removeItem('teammanager-profile')
+      localStorage.removeItem('teammanager-profileId')
       AppInsights.clearAuthenticatedUserContext()
       resolve()
     })
@@ -62,6 +62,7 @@ const mutations = {
   },
   [AUTH_LOGOUT]: (state) => {
     state.profile = {}
+    state.status = 'loggedout' // TBD fix correctly
   }
 }
 

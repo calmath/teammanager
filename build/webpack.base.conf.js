@@ -28,6 +28,7 @@ module.exports = {
       'components': resolve('src/components'),
       'actions': resolve('src/store/actions'),
       'utils': resolve('src/utils'),
+      'api': resolve('src/api'),
     },
   },
   module: {

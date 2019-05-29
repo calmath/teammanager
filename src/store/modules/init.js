@@ -1,15 +1,15 @@
 
 import { INIT_REQUEST, INIT_ERROR, INIT_SUCCESS } from '../actions/init'
-import squidexApi from 'utils/squidexApi'
+import squidexApi from 'api/squidexApi'
 import Vue from 'vue'
 import {AppInsights} from 'applicationinsights-js'
 
-const state = { status: '', squidexToken: JSON.parse(localStorage.getItem('squidex-token') || '{}') }
+const state = { status: '', teamManagerToken: JSON.parse(localStorage.getItem('teammanager-token') || '{}') }
 
 const getters = {
-  getSquidexToken: state => state.squidexToken,
+  getTeamManageToken: state => state.teamManagerToken,
   // TODO Check it's not expired...
-  isTokenLoaded: state => !!state.squidexToken.access_token,
+  isTokenLoaded: state => !!state.teamManagerToken.access_token,
 }
 
 const actions = {
@@ -17,7 +17,7 @@ const actions = {
     commit(INIT_REQUEST)
     squidexApi.getAccessToken()
       .then(resp => {
-        localStorage.setItem('squidex-token', JSON.stringify(resp))
+        localStorage.setItem('teammanager-token', JSON.stringify(resp))
         commit(INIT_SUCCESS, JSON.stringify(resp))
       })
       .catch(resp => {
@@ -33,7 +33,7 @@ const mutations = {
   },
   [INIT_SUCCESS]: (state, resp) => {
     state.status = 'success'
-    Vue.set(state, 'squidexToken', resp)
+    Vue.set(state, 'teamManagerToken', resp)
   },
   [INIT_ERROR]: (state) => {
     state.status = 'error'

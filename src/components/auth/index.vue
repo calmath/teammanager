@@ -2,8 +2,9 @@
   <div>
     <form class="login" @submit.prevent="login">
       <h1>Sign in</h1>
+      <div><span>{{error}}</span></div>
       <label>User name</label>
-      <input required v-model="username" type="text" placeholder="Snoopy"/>
+      <input required v-model="username" type="text" placeholder="Username"/>
       <label>Password</label>
       <input required v-model="password" type="password" placeholder="Password"/>
       <hr/>
@@ -30,17 +31,18 @@
     name: 'login',
     data () {
       return {
-        username: 'Test3',
-        password: 'Test3333',
+        username: 'mark.ames',
+        password: 'pwd',
+        error: 'None',
       }
     },
     created () {
       AppInsights.trackPageView('Login Page', '/auth')
     },
     computed: {
-      ...mapGetters(['getSquidexToken', 'isTokenLoaded']),
+      ...mapGetters(['getTeamManagerToken', 'isTokenLoaded']),
       ...mapState({
-        token: state => state.init.squidexToken,
+        token: state => state.init.teamManagerToken,
       }),
     },
     methods: {
@@ -48,6 +50,10 @@
         const { username, password, token } = this
         this.$store.dispatch(AUTH_REQUEST, { username, password, token }).then(() => {
           this.$router.push({path: '/'})
+        })
+        .catch(function (rej) {
+          alert(rej)
+          this.error = rej //TBD not being output fix
         })
       }
     },

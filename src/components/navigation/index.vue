@@ -10,7 +10,7 @@
       <ul>
         <li><router-link to="/">Home</router-link></li>
         <li v-if="authStatus === 'success'">
-          <router-link to="/profile">{{name}}</router-link>
+          {{name}}
         </li>
         <li v-if="authStatus === 'success'" @click="logout">
           <span class="logout">Logout</span>
