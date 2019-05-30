@@ -13,7 +13,7 @@
 <script>
 import Navigation from 'components/navigation'
 import { INIT_REQUEST } from 'actions/init'
-// import { PROFILE_REQUEST } from 'actions/auth'
+import { AUTH_REQUEST } from 'actions/auth'
 import SqreenFooter from './components/footer/index.vue'
 
 export default {
@@ -30,16 +30,12 @@ export default {
     if (!this.$store.getters.isTokenLoaded) {
       this.$store.dispatch(INIT_REQUEST).then(() => {
         if (this.$store.getters.isAuthenticated) {
-          // var token = this.$store.getters.getSquidexToken
-          // var id = this.$store.getters.profileId
-          // this.$store.dispatch(PROFILE_REQUEST, { id, token })
+          this.$store.dispatch(AUTH_REQUEST, { username: 'mark.ames', password: 'pwd', token: 'notRequired' })
         }
       })
     } else {
       if (this.$store.getters.isAuthenticated) {
-        // var token = this.$store.getters.getSquidexToken
-        // var id = this.$store.getters.profileId
-        // this.$store.dispatch(PROFILE_REQUEST, { id, token })
+        this.$store.dispatch(AUTH_REQUEST, { username: 'mark.ames', password: 'pwd', token: 'notRequired' })
       }
     }
   }

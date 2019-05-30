@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from 'components/home'
+import Players from 'components/players'
 import Login from 'components/auth'
 import store from '../store'
 
@@ -14,7 +15,6 @@ const ifNotAuthenticated = (to, from, next) => {
   next('/')
 }
 
-/*
 const ifAuthenticated = (to, from, next) => {
   if (store.getters.isAuthenticated) {
     next()
@@ -22,7 +22,6 @@ const ifAuthenticated = (to, from, next) => {
   }
   next('/login')
 }
-*/
 
 export default new Router({
   mode: 'history',
@@ -31,6 +30,12 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home,
+    },
+    {
+      path: '/players',
+      name: 'Players',
+      component: Players,
+      beforeEnter: ifAuthenticated,
     },
     {
       path: '/login',

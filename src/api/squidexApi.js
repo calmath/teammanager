@@ -38,7 +38,7 @@ squidexApi.authenticateMember = (member) => new Promise((resolve, reject) => {
   setTimeout(() => {
     try {
       if (member.username === 'mark.ames' && member.password === 'pwd') {
-        resolve({ id: 0, username: member.username, name: 'Mark Ames' })
+        resolve({ id: 1, username: member.username, name: 'Mark Ames' })
       } else {
         reject(new Error('User details incorrect'))
       }

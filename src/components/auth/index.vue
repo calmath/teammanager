@@ -53,7 +53,7 @@
         })
         .catch(function (rej) {
           alert(rej)
-          this.error = rej //TBD not being output fix
+          this.error = rej // TBD not being output fix
         })
       }
     },

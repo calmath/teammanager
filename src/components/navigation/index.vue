@@ -9,13 +9,16 @@
       <!-- [MENU ITEMS] -->
       <ul>
         <li><router-link to="/">Home</router-link></li>
-        <li v-if="authStatus === 'success'">
+        <li v-if="isAuthenticated">
+          <router-link to="/players">Players</router-link>
+        </li>
+        <li v-if="isAuthenticated">
           {{name}}
         </li>
-        <li v-if="authStatus === 'success'" @click="logout">
+        <li v-if="isAuthenticated" @click="logout">
           <span class="logout">Logout</span>
         </li>
-        <li v-if="authStatus != 'success' && !authLoading">
+        <li v-if="!isAuthenticated && !authLoading">
           <router-link to="/login">Login</router-link>
         </li>
       </ul>

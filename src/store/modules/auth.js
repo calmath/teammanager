@@ -62,7 +62,8 @@ const mutations = {
   },
   [AUTH_LOGOUT]: (state) => {
     state.profile = {}
-    state.status = 'loggedout' // TBD fix correctly
+    state.profileId = 0
+    state.status = 'success'
   }
 }
 
