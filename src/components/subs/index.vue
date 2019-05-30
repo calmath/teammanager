@@ -1,13 +1,14 @@
 <template>
   <div class="full-width">
     <div class="full-width">
-      <player-item v-for="(player, index) in players.players" :key="index" :player="player"/>
+      <button class="button" v-on:click="add">Add</button>
+      <sub-item v-for="(sub, index) in subs.subs" :key="index" :sub="sub"/>
     </div>
   </div>
 </template>
 
 <style>
-  .player {
+  .sub {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -18,19 +19,19 @@
 </style>
 
 <script>
-  import PlayerItem from './playerItem.vue'
-  import playersApi from 'api/playersApi'
+  import SubItem from './subItem.vue'
+  import subsApi from 'api/subsApi'
   import { mapGetters, mapState } from 'vuex'
   import {AppInsights} from 'applicationinsights-js'
 
   export default {
-    name: 'players',
+    name: 'subs',
     components: {
-      PlayerItem
+      SubItem
     },
     data () {
       return {
-        players: { total: 0, players: [] }
+        subs: { total: 0, subs: [] }
       }
     },
     computed: {
@@ -40,16 +41,21 @@
       })
     },
     created () {
-      AppInsights.trackPageView('Players Page', '/players')
+      AppInsights.trackPageView('Subs Page', '/subs')
       const { token } = this
-      playersApi.authToken = token
-      playersApi.list(token)
+      subsApi.authToken = token
+      subsApi.list(token)
         .then(resp => {
-          this.players = resp
+          this.subs = resp
         })
         .catch(resp => {
           AppInsights.trackException(resp)
         })
     },
+    methods: {
+      add: function () {
+        this.subs.subs.push(subsApi.new())
+      }
+    }
   }
 </script>

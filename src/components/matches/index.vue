@@ -1,13 +1,14 @@
 <template>
   <div class="full-width">
     <div class="full-width">
-      <player-item v-for="(player, index) in players.players" :key="index" :player="player"/>
+      <button class="button" v-on:click="add">Add</button>
+      <match-item v-for="(match, index) in matches.matches" :key="index" :match="match"/>
     </div>
   </div>
 </template>
 
 <style>
-  .player {
+  .match {
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -18,19 +19,19 @@
 </style>
 
 <script>
-  import PlayerItem from './playerItem.vue'
-  import playersApi from 'api/playersApi'
+  import MatchItem from './matchItem.vue'
+  import matchesApi from 'api/matchesApi'
   import { mapGetters, mapState } from 'vuex'
   import {AppInsights} from 'applicationinsights-js'
 
   export default {
-    name: 'players',
+    name: 'matches',
     components: {
-      PlayerItem
+      MatchItem
     },
     data () {
       return {
-        players: { total: 0, players: [] }
+        matches: { total: 0, matches: [] }
       }
     },
     computed: {
@@ -40,16 +41,21 @@
       })
     },
     created () {
-      AppInsights.trackPageView('Players Page', '/players')
+      AppInsights.trackPageView('Matches Page', '/matches')
       const { token } = this
-      playersApi.authToken = token
-      playersApi.list(token)
+      matchesApi.authToken = token
+      matchesApi.list(token)
         .then(resp => {
-          this.players = resp
+          this.matches = resp
         })
         .catch(resp => {
           AppInsights.trackException(resp)
         })
     },
+    methods: {
+      add: function () {
+        this.matches.matches.push(matchesApi.new())
+      }
+    }
   }
 </script>

@@ -5,9 +5,15 @@ const playersApi = {
 }
 
 function Player (squidexPlayers) {
-  this.id = squidexPlayers.id
-  this.firstname = squidexPlayers.data.firstname.iv
-  this.lastname = squidexPlayers.data.lastname.iv
+  if (squidexPlayers == null) {
+    this.id = null
+    this.firstname = ''
+    this.lastname = ''
+  } else {
+    this.id = squidexPlayers.id
+    this.firstname = squidexPlayers.data.firstname.iv
+    this.lastname = squidexPlayers.data.lastname.iv
+  }
 }
 
 const transformPlayers = function (squidexPlayers) {
@@ -16,6 +22,14 @@ const transformPlayers = function (squidexPlayers) {
     players.push(new Player(squidexPlayers[i]))
   }
   return players
+}
+
+const toPlayerDateObject = function (player) {
+  var playerDTO = '{ ' +
+    'firstname: { iv: \'' + player.firstname + '\' }, ' +
+    'lastname: { iv: \'' + player.lastname + '\' }, ' +
+    '}'
+  return playerDTO
 }
 
 playersApi.list = () => new Promise((resolve, reject) => {
@@ -59,8 +73,7 @@ playersApi.create = (player) => new Promise((resolve, reject) => {
   var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/players?publish=true'
   setTimeout(() => {
     try {
-      squidexApi.makeXMLHTTPRequest({url: url, method: 'POST', authToken: playersApi.authToken, data: '{ firstname: { iv: \'' + player.firstname + '\' }, lastname: { iv: \'' + player.lastname + '\' }}'}).then((value) => {
-        // resolve({ id: value.id, username: value.data.username.iv, name: value.data.name.iv })
+      squidexApi.makeXMLHTTPRequest({url: url, method: 'POST', authToken: playersApi.authToken, data: toPlayerDateObject(player)}).then((value) => {
         resolve(new Player(value))
       }, (reason) => {
         reject(new Error(reason))
@@ -75,10 +88,8 @@ playersApi.update = (player) => new Promise((resolve, reject) => {
   var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/players/' + player.id
   setTimeout(() => {
     try {
-      squidexApi.makeXMLHTTPRequest({url: url, method: 'PATCH', authToken: playersApi.authToken, data: '{ firstname: { iv: \'' + player.firstname + '\' }, lastname: { iv: \'' + player.lastname + '\' }}'}).then((value) => {
-        value = JSON.parse(value)
-        // resolve({ id: player.id, firstname: value.firstname.iv, lastname: value.lastname.iv })
-        resolve(new Player(value))
+      squidexApi.makeXMLHTTPRequest({url: url, method: 'PATCH', authToken: playersApi.authToken, data: toPlayerDateObject(player)}).then((value) => {
+        resolve(player)
       }, (reason) => {
         reject(new Error(reason))
       })
