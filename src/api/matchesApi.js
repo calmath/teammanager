@@ -26,6 +26,7 @@ function Match (squidexMatch) {
   var month = currentDate.getMonth() + 1
   var year = currentDate.getFullYear()
   this.displayDate = day + '/0' + month + '/' + year
+  this.playerName = ''
 }
 
 const transformMatches = function (squidexMatches) {
@@ -50,6 +51,25 @@ const toMatchDataObject = function (match) {
 matchesApi.new = function () {
   return new Match()
 }
+
+matchesApi.getTodays = () => new Promise((resolve, reject) => {
+  var currentDate = new Date()
+  var date = currentDate.getFullYear() + '-0' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate() + 'T00:00:00Z'
+
+  var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/matches?$filter=data/date/iv eq ' + date + ''
+  setTimeout(() => {
+    try {
+      squidexApi.makeXMLHTTPRequest({url: url, method: 'GET', authToken: matchesApi.authToken}).then((value) => {
+        var matches = JSON.parse(value)
+        resolve({ total: matches.total, matches: transformMatches(matches.items) })
+      }, (reason) => {
+        reject(new Error(reason))
+      })
+    } catch (err) {
+      reject(new Error(err))
+    }
+  }, 1000)
+})
 
 matchesApi.list = () => new Promise((resolve, reject) => {
   var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/matches'

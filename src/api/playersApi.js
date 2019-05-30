@@ -14,6 +14,8 @@ function Player (squidexPlayers) {
     this.firstname = squidexPlayers.data.firstname.iv
     this.lastname = squidexPlayers.data.lastname.iv
   }
+
+  this.fullName = this.firstname + ' ' + this.lastname
 }
 
 const transformPlayers = function (squidexPlayers) {
