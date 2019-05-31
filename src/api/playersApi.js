@@ -9,10 +9,12 @@ function Player (squidexPlayers) {
     this.id = null
     this.firstname = ''
     this.lastname = ''
+    this.balance = 0
   } else {
     this.id = squidexPlayers.id
     this.firstname = squidexPlayers.data.firstname.iv
     this.lastname = squidexPlayers.data.lastname.iv
+    this.balance = squidexPlayers.data.balance.iv
   }
 
   this.fullName = this.firstname + ' ' + this.lastname
@@ -30,10 +32,23 @@ const toPlayerDateObject = function (player) {
   var playerDTO = '{ ' +
     'firstname: { iv: \'' + player.firstname + '\' }, ' +
     'lastname: { iv: \'' + player.lastname + '\' }, ' +
+    'balance: { iv: ' + player.balance + ' }, ' +
     '}'
   return playerDTO
 }
 
+playersApi.updateBalance = (id, amount) => new Promise((resolve, reject) => {
+  playersApi.get(id).then((player) => {
+    player.balance += amount
+    playersApi.update(player).then(() => {
+      resolve()
+    }, (reason) => {
+      reject(new Error(reason))
+    })
+  }, (reason) => {
+    reject(new Error(reason))
+  })
+})
 playersApi.list = () => new Promise((resolve, reject) => {
   var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/players'
   setTimeout(() => {
@@ -50,8 +65,8 @@ playersApi.list = () => new Promise((resolve, reject) => {
   }, 1000)
 })
 
-playersApi.get = (player) => new Promise((resolve, reject) => {
-  var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/players/' + player.id
+playersApi.get = (id) => new Promise((resolve, reject) => {
+  var url = squidexApi.url + '/api/content/' + squidexApi.appName + '/players/' + id
   setTimeout(() => {
     try {
       squidexApi.makeXMLHTTPRequest({url: url, method: 'GET', authToken: playersApi.authToken}).then((value) => {

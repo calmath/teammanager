@@ -27,6 +27,7 @@ function Match (squidexMatch) {
   var year = currentDate.getFullYear()
   this.displayDate = day + '/0' + month + '/' + year
   this.playerName = ''
+  this.playerBalance = 0
 }
 
 const transformMatches = function (squidexMatches) {
@@ -112,7 +113,8 @@ matchesApi.create = (match) => new Promise((resolve, reject) => {
   setTimeout(() => {
     try {
       squidexApi.makeXMLHTTPRequest({url: url, method: 'POST', authToken: matchesApi.authToken, data: toMatchDataObject(match)}).then((value) => {
-        resolve(new Match(value))
+        var match = JSON.parse(value)
+        resolve(new Match(match))
       }, (reason) => {
         reject(new Error(reason))
       })

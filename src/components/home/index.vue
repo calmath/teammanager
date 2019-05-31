@@ -1,14 +1,8 @@
 <template>
-  <div>
+  <div class="full-width">
     <loading v-if="loading"/>
-    <div v-if="isAuthenticated">
-      <ul>
-        <li>Get all players</li>
-        <li>Create and empty match for every player</li>
-        <li>List these matches out</li>
-        <li>Save a match when values are changes</li>
-        <match-item v-for="(match, index) in currentMatches.matches" :key="index" :match="match"/>
-      </ul>
+    <div v-if="isAuthenticated" class="full-width">
+      <match-item v-for="(match, index) in currentMatches.matches" :key="index" :match="match"/>
     </div>
     <div v-if="!isAuthenticated && authStatus !== 'loading'">
       <h1>Splash screen</h1>
@@ -23,6 +17,9 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+  }
+  .full-width {
+    width: 100%;
   }
 </style>
 
@@ -68,19 +65,23 @@
             .then(resp => {
               this.matches = resp
 
-              for (const player in this.players.players) {
-                var foundMatch = this.matches.matches.find(match => match.player[0] === player.id)
-                if (foundMatch) {
-                  foundMatch.playerName = player.fullName
-                  this.currentMatches.matches.push(foundMatch)
-                } else {
-                  var newMatch = matchesApi.new()
-                  newMatch.player = [player.id]
-                  newMatch.playerName = player.fullName
-                  newMatch.subs = 2.5
-                  this.currentMatches.matches.push(newMatch)
+              this.players.players.forEach(
+                player => {
+                  var foundMatch = this.matches.matches.find(match => match.player[0] === player.id)
+                  if (foundMatch) {
+                    foundMatch.playerName = player.fullName
+                    foundMatch.playerBalance = player.balance
+                    this.currentMatches.matches.push(foundMatch)
+                  } else {
+                    var newMatch = matchesApi.new()
+                    newMatch.player = [player.id]
+                    newMatch.playerName = player.fullName
+                    newMatch.playerBalance = player.balance
+                    newMatch.subs = 0
+                    this.currentMatches.matches.push(newMatch)
+                  }
                 }
-              }
+              )
               this.currentMatches.total = this.currentMatches.matches.length
             })
             .catch(resp => {

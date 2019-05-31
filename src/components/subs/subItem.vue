@@ -17,13 +17,13 @@
     <div class="sub-item" v-if="editting">
       <form class="register" @submit.prevent="update">
         <div class="box">
-          <input required v-model="displayDate" type="text"/>
+          <input required v-model="sub.displayDate" type="text"/>
         </div>
         <div class="box">
-          <input required v-model="amount" type="text"/>
+          <input required v-model="sub.amount" type="text"/>
         </div>
         <div class="box">
-          <input required v-model="active" type="text"/>
+          <input required v-model="sub.active" type="text"/>
         </div>
         <div class="box">
         <button class="submit">Save</button>
@@ -65,24 +65,19 @@
     methods: {
       edit: function () {
         this.editting = true
-        this.id = this.sub.id
-        this.effectivedate = this.sub.effectivedate
-        this.displayDate = this.sub.displayDate
-        this.amount = this.sub.amount
-        this.active = this.sub.active
       },
       update: function () {
-        const { id, displayDate, amount, active, token } = this
+        const { token } = this
         // convert displayDate to effectivedate 'dd/mm/yyyy'
         var dateParts = displayDate.split('/')
-        var effectivedate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
+        this.sub.effectivedate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
         subsApi.authToken = token
-        if (id) {
-          subsApi.update({ id, effectivedate, amount, active }).then(() => {
+        if (this.sub.id) {
+          subsApi.update(this.sub).then(() => {
             this.editting = false
           })
         } else {
-          subsApi.create({ effectivedate, amount, active }).then(() => {
+          subsApi.create(this.sub).then(() => {
             this.editting = false
           })
         }

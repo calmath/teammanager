@@ -1,6 +1,7 @@
 <template>
   <div class="full-width">
     <div class="full-width">
+      <button class="button" v-on:click="add">Add</button>
       <player-item v-for="(player, index) in players.players" :key="index" :player="player"/>
     </div>
   </div>
@@ -51,5 +52,10 @@
           AppInsights.trackException(resp)
         })
     },
+    methods: {
+      add: function () {
+        this.players.players.push(playersApi.new())
+      }
+    }
   }
 </script>

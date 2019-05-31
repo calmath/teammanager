@@ -23,19 +23,19 @@
     <div class="match-item" v-if="editting">
       <form class="register" @submit.prevent="update">
         <div class="box">
-          <input required v-model="displayDate" type="text"/>
+          <input required v-model="match.displayDate" type="text"/>
         </div>
         <div class="box">
-          <input required v-model="player" type="text"/>
+          <input required v-model="match.player" type="text"/>
         </div>
         <div class="box">
-          <input required v-model="result" type="text"/>
+          <input required v-model="match.result" type="text"/>
         </div>
         <div class="box">
-          <input required v-model="isprimary" type="text"/>
+          <input required v-model="match.isprimary" type="text"/>
         </div>
         <div class="box">
-          <input required v-model="subs" type="text"/>
+          <input required v-model="match.subs" type="text"/>
         </div>
         <div class="box">
         <button class="submit">Save</button>
@@ -77,25 +77,18 @@
     methods: {
       edit: function () {
         this.editting = true
-        this.id = this.match.id
-        this.date = this.match.date
-        this.displayDate = this.match.displayDate
-        this.player = this.match.player
-        this.result = this.match.result
-        this.isprimary = this.match.isprimary
-        this.subs = this.match.subs
       },
       update: function () {
-        const { id, displayDate, player, result, isprimary, subs, token } = this
+        const { token } = this
         var dateParts = displayDate.split('/')
-        var date = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
+        this.match.date = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
         matchesApi.authToken = token
-        if (id) {
-          matchesApi.update({ id, date, player, result, isprimary, subs }).then(() => {
+        if (this.match.id) {
+          matchesApi.update(this.match).then(() => {
             this.editting = false
           })
         } else {
-          matchesApi.create({ date, player, result, isprimary, subs }).then(() => {
+          matchesApi.create(this.match).then(() => {
             this.editting = false
           })
         }

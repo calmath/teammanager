@@ -1,12 +1,27 @@
 <template>
-  <div class="player-item">
-    <div class="box">{{ player.firstname + ' ' + player.lastname }}</div>
-    <div class="box" ref="subs">
-      <button class="button" v-on:click="collectSubs">Collect Subs</button>
+  <div>
+    <div class="player-item" v-if="!editting">
+      <div class="box">{{ player.firstname + ' ' + player.lastname }}</div>
+      <div class="box">£{{ player.balance.toFixed(2) }}</div>
+      <div class="box">
+        <button class="button" v-on:click="edit">Edit</button>
+      </div>
     </div>
-    <div class="box" ref="parent">
-      <button class="button" v-on:click="won">&#10003;</button>
-      <button class="button" v-on:click="lost">&#10005;</button>
+    <div class="match-item" v-if="editting">
+      <form class="register" @submit.prevent="update">
+        <div class="box">
+          <input required v-model="player.firstname" type="text"/>
+        </div>
+        <div class="box">
+          <input required v-model="player.lastname" type="text"/>
+        </div>
+        <div class="box">
+          <input required v-model="player.balance" type="text"/>
+        </div>
+        <div class="box">
+        <button class="submit">Save</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -16,7 +31,7 @@
     padding: 1em;
     width: 100%;
     display: grid;
-    grid-template-columns: 50% 25% 25%;
+    grid-template-columns: 25% 10% 10%;
     grid-gap: 1px;
     background-color: #fff;
     color: #444;
@@ -30,21 +45,39 @@
   }
 </style>
 <script>
+  import playersApi from 'api/playersApi'
+  import { mapGetters, mapState } from 'vuex'
+
   export default {
     name: 'playerItem',
     props: {player: Object},
+    data () {
+      return {
+        editting: false
+      }
+    },
+    computed: {
+      ...mapGetters(['getTeamManagerToken', 'isTokenLoaded']),
+      ...mapState({
+        token: state => state.init.teamManagerToken,
+      })
+    },
     methods: {
-      collectSubs: function () {
-        alert('Default subs collected for ' + this.player.firstname)
-        this.$refs.subs.innerHTML = 'Paid'
+      edit: function () {
+        this.editting = true
       },
-      won: function () {
-        alert(this.player.firstname + ' won')
-        this.$refs.parent.innerHTML = 'Won'
-      },
-      lost: function () {
-        alert(this.player.firstname + ' lost')
-        this.$refs.parent.innerHTML = 'Lost'
+      update: function () {
+        const { token } = this
+        playersApi.authToken = token
+        if (this.player.id) {
+          playersApi.update(this.player).then(() => {
+            this.editting = false
+          })
+        } else {
+          playersApi.create(this.player).then(() => {
+            this.editting = false
+          })
+        }
       }
     }
   }

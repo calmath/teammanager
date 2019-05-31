@@ -1,46 +1,26 @@
 <template>
   <div>
-    <div class="match-item" v-if="!editting">
-        <div class="box">
-        {{ match.date }}
-        </div>
-        <div class="box">
-        {{ match.player }}
-        </div>
-        <div class="box">
-        {{ match.result }}
-        </div>
-        <div class="box">
-        {{ match.isprimary }}
-        </div>
-        <div class="box">
-        {{ match.subs }}
-        </div>
-        <div class="box">
-        <button class="button" v-on:click="edit">Edit</button>
-        </div>
-    </div>
-    <div class="match-item" v-if="editting">
-      <form class="register" @submit.prevent="update">
-        <div class="box">
-          <input required v-model="displayDate" type="text"/>
-        </div>
-        <div class="box">
-          <input required v-model="player" type="text"/>
-        </div>
-        <div class="box">
-          <input required v-model="result" type="text"/>
-        </div>
-        <div class="box">
-          <input required v-model="isprimary" type="text"/>
-        </div>
-        <div class="box">
-          <input required v-model="subs" type="text"/>
-        </div>
-        <div class="box">
-        <button class="submit">Save</button>
-        </div>
-      </form>
+    <div class="match-item">
+      <div class="box">
+        {{ match.playerName }}
+      </div>
+      <div class="box" ref="parent" v-if="match.result === null">
+        <button class="button" v-on:click="won">&#10003;</button>
+        <button class="button" v-on:click="lost">&#10005;</button>
+      </div>
+      <div class="box" ref="parent" v-else>
+        <span v-if="match.result">Won</span>
+        <span v-else>Lost</span>
+      </div>
+      <div class="box" ref="subs" v-if="match.subs === 0">
+        <button class="button" v-on:click="collectSubs">+</button>
+      </div>
+      <div class="box" ref="subs" v-else>Paid</div>
+      <div>
+        £{{ match.playerBalance.toFixed(2) }}
+        <button class="button" v-on:click="adjustPlayerBalance(false)">-</button>
+        <button class="button" v-on:click="adjustPlayerBalance">+</button>
+      </div>
     </div>
   </div>
 </template>
@@ -50,13 +30,14 @@
     padding: 1em;
     width: 100%;
     display: grid;
-    grid-template-columns: 25% 25% 10% 10% 10% 20%;
+    grid-template-columns: 20% 5% 5% 10%;
     grid-gap: 1px;
     background-color: #fff;
     color: #444;
   }
 </style>
 <script>
+  import playersApi from 'api/playersApi'
   import matchesApi from 'api/matchesApi'
   import { mapGetters, mapState } from 'vuex'
 
@@ -65,7 +46,6 @@
     props: {match: Object},
     data () {
       return {
-        editting: false
       }
     },
     computed: {
@@ -75,28 +55,48 @@
       })
     },
     methods: {
-      edit: function () {
-        this.editting = true
-        this.id = this.match.id
-        this.date = this.match.date
-        this.displayDate = this.match.displayDate
-        this.player = this.match.player
-        this.result = this.match.result
-        this.isprimary = this.match.isprimary
-        this.subs = this.match.subs
+      collectSubs: function () {
+        this.$refs.subs.innerHTML = 'Paid'
+        this.match.subs = 2.5
+        this.update(this.match)
       },
-      update: function () {
-        const { id, displayDate, player, result, isprimary, subs, token } = this
-        var dateParts = displayDate.split('/')
-        var date = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
+      won: function () {
+        this.$refs.parent.innerHTML = 'Won'
+        this.match.result = true
+        this.match.isprimary = true
+        this.update(this.match)
+      },
+      lost: function () {
+        this.$refs.parent.innerHTML = 'Lost'
+        this.match.result = false
+        this.match.isprimary = true
+        this.update(this.match)
+      },
+      adjustPlayerBalance: function (credit = true) {
+        const { token } = this
+        var amount = 2.5
+        if (!credit) amount = -2.5
+        // disable buttons
+        playersApi.authToken = token
+        playersApi.updateBalance(this.match.player, amount).then(() => {
+          this.match.playerBalance += amount
+          // enable buttons
+        })
+      },
+      update: function (match) {
+        const { token } = this
+        var dateParts = match.displayDate.split('/')
+        match.date = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
         matchesApi.authToken = token
-        if (id) {
-          matchesApi.update({ id, date, player, result, isprimary, subs }).then(() => {
-            this.editting = false
+        // disable actions
+        if (match.id) {
+          matchesApi.update(match).then(() => {
+            // enable actions
           })
         } else {
-          matchesApi.create({ date, player, result, isprimary, subs }).then(() => {
-            this.editting = false
+          matchesApi.create(match).then((resp) => {
+            this.match.id = resp.id
+            // enable actions
           })
         }
       }
