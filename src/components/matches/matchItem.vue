@@ -80,7 +80,7 @@
       },
       update: function () {
         const { token } = this
-        var dateParts = displayDate.split('/')
+        var dateParts = this.match.displayDate.split('/')
         this.match.date = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
         matchesApi.authToken = token
         if (this.match.id) {

@@ -69,7 +69,7 @@
       update: function () {
         const { token } = this
         // convert displayDate to effectivedate 'dd/mm/yyyy'
-        var dateParts = displayDate.split('/')
+        var dateParts = this.sub.displayDate.split('/')
         this.sub.effectivedate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + 'T00:00:00Z'
         subsApi.authToken = token
         if (this.sub.id) {
