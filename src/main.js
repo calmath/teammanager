@@ -29,7 +29,7 @@ Vue.config.productionTip = false
 Vue.component('loading', Loading)
 Vue.component('center-container', CenterContainer)
 
-/* eslint-disable no-new */
+// eslint-disable-next-line no-new
 new Vue({
   el: '#app',
   router,
