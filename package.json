@@ -12,7 +12,9 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs",
     "build": "node build/build.js",
     "nginx": "node build/deploy.js",
-    "deploy": "npm run build && npm run nginx"
+    "deploy": "npm run build && npm run nginx",
+    "clean": "node build/clean.js",
+    "reinstall": "npm run clean && npm install" 
   },
   "dependencies": {
     "applicationinsights-js": "^1.0.20",
