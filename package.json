@@ -1,7 +1,7 @@
 {
-  "name": "squidex-client",
+  "name": "team-manager",
   "version": "1.0.0",
-  "description": "A Vue.js with a SquidEx backend",
+  "description": "Managing a team of players, subs and results",
   "author": "Mark Ames <ml_ames@yahoo.co.uk>",
   "private": true,
   "scripts": {
