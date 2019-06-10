@@ -14,7 +14,7 @@
     "nginx": "node build/deploy.js",
     "deploy": "npm run build && npm run nginx",
     "clean": "node build/clean.js",
-    "reinstall": "npm run clean && npm install" 
+    "reinstall": "npm run clean && npm install"
   },
   "dependencies": {
     "applicationinsights-js": "^1.0.20",
