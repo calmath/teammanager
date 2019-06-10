@@ -37,6 +37,10 @@ const toPlayerDateObject = function (player) {
   return playerDTO
 }
 
+playersApi.new = function () {
+  return new Player()
+}
+
 playersApi.updateBalance = (id, amount) => new Promise((resolve, reject) => {
   playersApi.get(id).then((player) => {
     player.balance += amount
